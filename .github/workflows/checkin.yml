@@ -1,0 +1,20 @@
+name: Rainyun Auto Check-in
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  checkin:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -r requirements.txt
+      - name: 写入API密钥
+        run: |
+          echo '{"auth":{"x-api-key":"${{ secrets.RAINYUN_API_KEY }}"}}' > config.json
+      - run: python app.py check_in --auto --force
